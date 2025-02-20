@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D _rb = null;
     private bool _isGrounded = false;
     //Health
+    private bool powerup = false;
     public Image healthbar;
     private float healthAmount = 100.0f;
     private Animator _animator = null;
@@ -24,12 +25,14 @@ public class PlayerController : MonoBehaviour
     public CanvasGroup gameOverCanvas;
     public float belowGround = -10f;
     [SerializeField] private SpriteRenderer _spriteRenderer;
+    private PlayAudio _playAudio;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
+        _playAudio = GetComponent<PlayAudio>();
         if(!_rb){
             Debug.Log("Failed to get rb");
         }
@@ -86,6 +89,7 @@ public class PlayerController : MonoBehaviour
             _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, _jumpForce);
             _isGrounded = false; // Assume not grounded after jump
             _animator.SetBool("IsJumping", true);
+            _playAudio.PlayJumpSound();
         }
     }
 
@@ -111,6 +115,7 @@ public class PlayerController : MonoBehaviour
         Debug.Log("Player Hurt");
         Debug.Log("Health: " + healthAmount);
         takeDamage(damage);
+        _playAudio.PlayDamageSound();
     }
 
     public void takeDamage(float damage){
